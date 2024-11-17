@@ -1,0 +1,54 @@
+---
+- hosts: webservers
+  gather_facts: no
+  vars:
+    user: "{{ ansible_user }}"
+    project_name: edu_meet_admin
+    dadata_api_key: "{{ lookup('env', 'DADATA_API_KEY') }}"
+    debug: "{{ lookup('env', 'DEBUG') }}"
+    production: "{{ lookup('env', 'PRODUCTION') }}"
+    secret_key: "{{ lookup('env', 'SECRET_KEY') }}"
+    database_url: "{{ lookup('env', 'DATABASE_URL') }}"
+    allowed_hosts: "{{ lookup('env', 'ALLOWED_HOSTS') }}"
+
+  tasks:
+    - name: Ensure the latest code is pulled from GitHub
+      git:
+      # Для публичных репозиториев можно использовать http
+      # что бы не добавлять ssh ключи на сервер
+        repo: "https://github.com/Asgef/{{ project_name }}.git"
+        dest: "/home/{{ user }}/{{ project_name }}"
+        version: main
+        update: yes
+      
+    - name: Add .env file
+      ansible.builtin.template:
+        src: ".env.j2"
+        dest: "/home/{{ user }}/{{ project_name }}/.env"
+    
+    - name: Show shell
+      ansible.builtin.command:
+        cmd: |
+          python --version
+      register: asdf_processes
+      ignore_errors: true
+
+    - name: Show var
+      ansible.builtin.debug:
+        var: asdf_processes
+
+    - name: Install project
+      community.general.make:
+        chdir: "/home/{{ user }}/{{ project_name }}"
+        target: install
+
+    - name: Build project
+      community.general.make:
+        chdir: "/home/{{ user }}/{{ project_name }}"
+        target: build
+
+    - name: Stop any running Gunicorn services
+      community.general.make:
+        chdir: "/home/{{ user }}/{{ project_name }}"
+        target: stop-production
+      ignore_errors: true
