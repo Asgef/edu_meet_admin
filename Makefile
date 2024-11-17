@@ -1,4 +1,4 @@
-MANAGE := poetry run python3 manage.py
+MANAGE := /home/nica/.local/bin/poetry run python3 manage.py
 
 
 install:
