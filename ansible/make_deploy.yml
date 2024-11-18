@@ -25,17 +25,6 @@
       ansible.builtin.template:
         src: ".env.j2"
         dest: "/home/{{ user }}/{{ project_name }}/.env"
-    
-    - name: Show shell
-      ansible.builtin.command:
-        cmd: |
-          python --version
-      register: asdf_processes
-      ignore_errors: true
-
-    - name: Show var
-      ansible.builtin.debug:
-        var: asdf_processes
 
     - name: Install project
       community.general.make:

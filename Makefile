@@ -1,4 +1,4 @@
-MANAGE := /home/nica/.local/bin/poetry run python3 manage.py
+MANAGE := /home/nica/.local/bin/poetry run python manage.py
 
 
 install:
@@ -27,8 +27,8 @@ migrate:
 	${MANAGE} migrate
 
 build:
-	generate-models
-	migrate
+	make generate-models
+	make migrate
 
 test:
 	poetry run python3 manage.py test
