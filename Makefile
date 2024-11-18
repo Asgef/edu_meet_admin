@@ -1,4 +1,4 @@
-MANAGE := /home/nica/.local/bin/poetry run python manage.py
+MANAGE := poetry run python manage.py
 
 
 install:
@@ -27,6 +27,7 @@ migrate:
 	${MANAGE} migrate
 
 build:
+	make staticfiles
 	make generate-models
 	make migrate
 
@@ -38,8 +39,8 @@ test:
 #	poetry run coverage report -m --include=task_manager/* --omit=task_manager/settings.py
 #	poetry run coverage xml --include=task_manager/* --omit=task_manager/settings.py
 
-#staticfiles:
-#	${MANAGE} collectstatic --no-input
+staticfiles:
+	${MANAGE} collectstatic --no-input
 
 load_user:
 	python manage.py loaddata admin_users.json
