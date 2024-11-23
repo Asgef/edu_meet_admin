@@ -8,6 +8,8 @@ coverage.xml
 .pytest_cache/
 .idea/
 node_modules/
+jquery/
+jquery-ui/
 package-lock.json
 edu_meet_admin_panel/models.py
 .env

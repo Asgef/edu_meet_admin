@@ -26,7 +26,13 @@ migrate:
 	${MANAGE} makemigrations --check
 	${MANAGE} migrate
 
+dependencies:
+	npm install
+	npm run build
+
+
 build:
+	make dependencies
 	make staticfiles
 	make generate-models
 	make migrate
