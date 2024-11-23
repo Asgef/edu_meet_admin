@@ -7,8 +7,8 @@
     "build": "npm run copy-dependencies",
     "add_static_dir": "mkdir -p edu_meet_admin_panel/static",
     "copy-dependencies": "npm run copy-jquery && npm run copy-jquery-ui",
-    "copy-jquery": "cp node_modules/jquery edu_meet_admin_panel/static/",
-    "copy-jquery-ui": "cp node_modules/jquery-ui/ edu_meet_admin_panel/static/"
+    "copy-jquery": "cp -r node_modules/jquery edu_meet_admin_panel/static/",
+    "copy-jquery-ui": "cp -r node_modules/jquery-ui/ edu_meet_admin_panel/static/"
   },
   "keywords": ["django", "admin", "scheduler", "jquery", "jquery-ui"],
   "author": "Asgef <asgefes1@@gmail.com>",
