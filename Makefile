@@ -8,7 +8,7 @@ start-production:
 	poetry run gunicorn --daemon -w 5 -b 0.0.0.0:8000 edu_meet_admin_panel.wsgi
 
 stop-production:
-	pkill -f 'edu_meet_admin_panel:application'
+	pkill -f gunicorn
 
 start:
 	${MANAGE} runserver 0.0.0.0:8000
