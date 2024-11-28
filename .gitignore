@@ -11,6 +11,7 @@ node_modules/
 jquery/
 jquery-ui/
 package-lock.json
+user.json
 edu_meet_admin_panel/models.py
 .env
 .env_prod

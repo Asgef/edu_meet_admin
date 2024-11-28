@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'schedule',
     'django_bootstrap5',
+    'edu_meet_admin_panel',
 ]
 
 MIDDLEWARE = [
