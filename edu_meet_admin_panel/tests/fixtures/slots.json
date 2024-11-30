@@ -1,0 +1,15 @@
+[
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 1,
+        "fields": {
+            "date": "2024-11-30T09:00:00Z",
+            "time_start": "09:00:00",
+            "time_end": "10:00:00",
+            "tutor": 1,
+            "student": null,
+            "is_available": true,
+            "comment": "Test slot"
+        }
+    }
+]

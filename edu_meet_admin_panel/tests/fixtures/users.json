@@ -1,0 +1,17 @@
+[
+{
+    "model": "edu_meet_admin_panel.user",
+    "pk": 2,
+    "fields": {
+        "tg_id": 203421435,
+        "username": "Asgef",
+        "first_name": "Asgef",
+        "last_name": null,
+        "is_admin": true,
+        "timezone": "Europe/Moscow",
+        "last_activity": "2024-11-29T11:45:15.170Z",
+        "created_at": "2024-11-29T11:45:15.170Z",
+        "updated_at": "2024-11-29T11:45:15.170Z"
+    }
+}
+]
