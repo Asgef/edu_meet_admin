@@ -14,7 +14,7 @@ start:
 	${MANAGE} runserver 0.0.0.0:8000
 
 lint:
-	poetry run flake8 edu_meet_admin_panel --exclude migrations
+	poetry run flake8 .
 
 shell:
 	${MANAGE} shell_plus --bpython

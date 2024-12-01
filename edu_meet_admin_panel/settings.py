@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
-import sys
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
@@ -101,16 +100,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',  # noqa E501
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',  # noqa E501
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',  # noqa E501
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',  # noqa E501
     },
 ]
 
@@ -175,13 +174,15 @@ FIXTURE_DIRS = ('edu_meet_admin_panel/tests/fixtures/',)
 
 SLOT_SETTINGS = {
     'DAILY_SLOTS': [
-        (time(9, 0), time(10, 0)),
-        (time(10, 0), time(11, 0)),
-        (time(11, 0), time(12, 0)),
-        (time(14, 0), time(15, 0)),
         (time(15, 0), time(16, 0)),
+        (time(16, 0), time(17, 0)),
         (time(17, 0), time(18, 0)),
-    ], # Список дневных слотов
-    'WEEKEND': [5, 6], # Выходные
+        (time(18, 0), time(19, 0)),
+        (time(19, 0), time(20, 0)),
+        (time(20, 0), time(21, 0)),
+        (time(21, 0), time(22, 0)),
+        (time(22, 0), time(23, 0)),
+    ],  # Список дневных слотов
+    'WEEKEND': [5, 6],  # Выходные
     'TUTOR_TG_ID': int(os.getenv('TUTOR_TG_ID')),  # Чтение ID из окружения
 }

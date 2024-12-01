@@ -1,6 +1,7 @@
 from django.test import TestCase
 from edu_meet_admin_panel.models import Slot, User
 from django.core.management import call_command
+from django.conf import settings
 
 
 class InitSlotsTest(TestCase):
@@ -29,8 +30,12 @@ class InitSlotsTest(TestCase):
         self.assertEqual(Slot.objects.count(), 0)
 
         # Запускаем команду init_slots
-        call_command('init_slots')
+        call_command('init_slots', weeks=1)
 
         # Проверяем, что добавлены новые слоты
         self.assertGreater(Slot.objects.count(), 1)
-        self.assertEqual(Slot.objects.count(), 120)
+        self.assertEqual(
+            Slot.objects.count(),
+            len(settings.SLOT_SETTINGS['DAILY_SLOTS']) * 5
+            # Количество слотов * количество дней
+        )

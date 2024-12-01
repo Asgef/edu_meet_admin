@@ -4,6 +4,7 @@ from datetime import datetime, time
 from edu_meet_admin_panel.models import Slot, User
 from django.conf import settings
 
+
 class Command(BaseCommand):
     help = 'Initialize slots'
 
@@ -19,16 +20,21 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         weeks = kwargs['weeks']  # Получаем значение аргумента --weeks
         # Выбираем первого администратора как репетитора
-        tutor = User.objects.filter(tg_id=settings.SLOT_SETTINGS['TUTOR_TG_ID']).first()
+        tutor = User.objects.filter(
+            tg_id=settings.SLOT_SETTINGS['TUTOR_TG_ID']
+        ).first()
 
         # Проверяем, есть ли администратор, если нет — выводим ошибку
         if not tutor:
-            self.stdout.write(self.style.ERROR('There is no administrator available to assign slots.'))
+            self.stdout.write(self.style.ERROR(
+                'There is no administrator available to assign slots.')
+            )
             return
 
         # Устанавливаем начальную и конечную дату
         start_date = now().date()  # Сегодняшняя дата
-        end_date = start_date + timedelta(weeks=weeks)  # Дата через указанное количество недель
+        # Дата через указанное количество недель
+        end_date = start_date + timedelta(weeks=weeks)
 
         # Пример расписания для одного дня (время начала и окончания слотов)
         daily_slots = settings.SLOT_SETTINGS['DAILY_SLOTS']
@@ -36,13 +42,16 @@ class Command(BaseCommand):
         created_slots = 0  # Счетчик для созданных слотов
 
         # Генерация слотов по дням в заданном диапазоне
-        for single_date in (start_date + timedelta(days=n) for n in range((end_date - start_date).days)):
+        for single_date in (start_date + timedelta(days=n)
+                            for n in range((end_date - start_date).days)):
             # Пропускаем выходные (суббота и воскресенье)
             if single_date.weekday() in settings.SLOT_SETTINGS['WEEKEND']:
                 continue
 
             # Преобразуем "наивную" дату в "осведомленную" с временной зоной
-            single_date_aware = make_aware(datetime.combine(single_date, time.min))
+            single_date_aware = make_aware(
+                datetime.combine(single_date, time.min)
+            )
 
             # Генерация слотов для текущей даты
             for start_time, end_time in daily_slots:

@@ -1,9 +1,13 @@
 from django.contrib import admin
 from django.apps import apps
 
+
 # Настройка отображения полей в админке
 class SlotAdmin(admin.ModelAdmin):
-    list_display = ('id', 'status_col', 'date_col', 'time_start_col', 'time_end_col', 'tutor_col', 'student_col', 'comment_col')
+    list_display = (
+        'id', 'status_col', 'date_col', 'time_start_col',
+        'time_end_col', 'tutor_col', 'student_col', 'comment_col'
+    )
     search_fields = ('tutor__username', 'student__username', 'comment')
     list_filter = ('status', 'date')
 
@@ -43,9 +47,11 @@ class SlotAdmin(admin.ModelAdmin):
     comment_col.admin_order_field = 'comment'
 
 
-
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'student_col', 'tutor_col', 'slot_col', 'subject_col', 'status_col', 'date_col', 'comment_col')
+    list_display = (
+        'id', 'student_col', 'tutor_col', 'slot_col', 'subject_col',
+        'status_col', 'date_col', 'comment_col'
+    )
     search_fields = ('student__username', 'tutor__username', 'comment')
     list_filter = ('status',)
 
@@ -85,7 +91,6 @@ class OrderAdmin(admin.ModelAdmin):
     comment_col.admin_order_field = 'comment'
 
 
-
 class UserAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'tg_id', 'username_col', 'is_admin_col', 'timezone',
@@ -118,7 +123,6 @@ class UserAdmin(admin.ModelAdmin):
         return obj.created_at.strftime("%d.%m.%Y %H:%M")
     created_at_col.short_description = "Дата создания"
     created_at_col.admin_order_field = 'created_at'
-
 
 
 # Словарь: модель -> класс админки
