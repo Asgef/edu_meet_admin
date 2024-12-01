@@ -59,7 +59,7 @@ class Command(BaseCommand):
                     time_end=end_time,  # Время окончания
                     tutor=tutor,  # Репетитор
                     defaults={  # Значения по умолчанию
-                        'is_available': True,  # Слот доступен
+                        'status': 'available',  # Слот доступен
                         'comment': '',  # Комментарий пустой
                     }
                 )
@@ -68,5 +68,5 @@ class Command(BaseCommand):
 
         # Выводим результат выполнения команды
         self.stdout.write(
-            self.style.SUCCESS(f'Создано {created_slots} новых слотов')
+            self.style.SUCCESS(f'{created_slots} new slots created')
         )
