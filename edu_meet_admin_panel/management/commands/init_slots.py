@@ -1,7 +1,8 @@
 from django.core.management.base import BaseCommand
-from django.utils.timezone import now, make_aware, timedelta  # Работа с временными зонами и временными интервалами
-from datetime import datetime, time  # Работа с датами и временем
-from edu_meet_admin_panel.models import Slot, User  # Модели вашего приложения
+from django.utils.timezone import now, make_aware, timedelta
+from datetime import datetime, time
+from edu_meet_admin_panel.models import Slot, User
+from django.conf import settings
 
 class Command(BaseCommand):
     help = 'Initialize slots'
@@ -12,17 +13,17 @@ class Command(BaseCommand):
             '--weeks',
             type=int,
             default=4,  # По умолчанию 4 недели
-            help='Количество недель для генерации слотов (по умолчанию 4)'
+            help='Number of weeks to generate slots (default 4)'
         )
 
     def handle(self, *args, **kwargs):
         weeks = kwargs['weeks']  # Получаем значение аргумента --weeks
         # Выбираем первого администратора как репетитора
-        tutor = User.objects.filter(is_admin=True).first()
+        tutor = User.objects.filter(tg_id=settings.SLOT_SETTINGS['TUTOR_TG_ID']).first()
 
         # Проверяем, есть ли администратор, если нет — выводим ошибку
         if not tutor:
-            self.stdout.write(self.style.ERROR('Нет доступного администратора для назначения слотов.'))
+            self.stdout.write(self.style.ERROR('There is no administrator available to assign slots.'))
             return
 
         # Устанавливаем начальную и конечную дату
@@ -30,21 +31,14 @@ class Command(BaseCommand):
         end_date = start_date + timedelta(weeks=weeks)  # Дата через указанное количество недель
 
         # Пример расписания для одного дня (время начала и окончания слотов)
-        daily_slots = [
-            (time(9, 0), time(10, 0)),
-            (time(10, 0), time(11, 0)),
-            (time(11, 0), time(12, 0)),
-            (time(14, 0), time(15, 0)),
-            (time(15, 0), time(16, 0)),
-            (time(17, 0), time(18, 0)),
-        ]
+        daily_slots = settings.SLOT_SETTINGS['DAILY_SLOTS']
 
         created_slots = 0  # Счетчик для созданных слотов
 
         # Генерация слотов по дням в заданном диапазоне
         for single_date in (start_date + timedelta(days=n) for n in range((end_date - start_date).days)):
             # Пропускаем выходные (суббота и воскресенье)
-            if single_date.weekday() in [5, 6]:  # 5 = суббота, 6 = воскресенье
+            if single_date.weekday() in settings.SLOT_SETTINGS['WEEKEND']:
                 continue
 
             # Преобразуем "наивную" дату в "осведомленную" с временной зоной

@@ -15,6 +15,7 @@ import sys
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
+from datetime import time
 
 load_dotenv()
 
@@ -169,3 +170,18 @@ FIXTURE_DIRS = ('edu_meet_admin_panel/tests/fixtures/',)
 #     },
 # }
 
+
+# Slot settings
+
+SLOT_SETTINGS = {
+    'DAILY_SLOTS': [
+        (time(9, 0), time(10, 0)),
+        (time(10, 0), time(11, 0)),
+        (time(11, 0), time(12, 0)),
+        (time(14, 0), time(15, 0)),
+        (time(15, 0), time(16, 0)),
+        (time(17, 0), time(18, 0)),
+    ], # Список дневных слотов
+    'WEEKEND': [5, 6], # Выходные
+    'TUTOR_TG_ID': int(os.getenv('TUTOR_TG_ID')),  # Чтение ID из окружения
+}

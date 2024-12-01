@@ -3,9 +3,9 @@
     "model": "edu_meet_admin_panel.user",
     "pk": 2,
     "fields": {
-        "tg_id": 203421435,
-        "username": "Asgef",
-        "first_name": "Asgef",
+        "tg_id": 217474781,
+        "username": "vera_kail",
+        "first_name": "Veronika",
         "last_name": null,
         "is_admin": true,
         "timezone": "Europe/Moscow",
