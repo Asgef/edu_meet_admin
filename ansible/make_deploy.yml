@@ -7,6 +7,7 @@
     dadata_api_key: "{{ lookup('env', 'DADATA_API_KEY') }}"
     debug: "{{ lookup('env', 'DEBUG') }}"
     production: "{{ lookup('env', 'PRODUCTION') }}"
+    tg_id: "{{ lookup('env', 'TUTOR_TG_ID') }}"
     secret_key: "{{ lookup('env', 'SECRET_KEY') }}"
     database_url: "{{ lookup('env', 'DATABASE_URL') }}"
     allowed_hosts: "{{ lookup('env', 'ALLOWED_HOSTS') }}"

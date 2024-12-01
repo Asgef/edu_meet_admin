@@ -32,6 +32,7 @@ jobs:
         env:
           DEBUG: ${{ vars.DEBUG }}
           PRODUCTION: ${{ vars.PRODUCTION }}
+          TUTOR_TG_ID: ${{ vars.TUTOR_TG_ID }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
