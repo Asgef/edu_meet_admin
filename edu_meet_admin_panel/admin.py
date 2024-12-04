@@ -125,15 +125,34 @@ class UserAdmin(admin.ModelAdmin):
     created_at_col.admin_order_field = 'created_at'
 
 
+class AcademicSubjectAdmin(admin.ModelAdmin):
+    list_display = (
+        'name_col', 'description_col', 'created_at', 'updated_at'
+    )
+    search_fields = ('name', 'description')
+
+
+    def name_col(self, obj):
+        return obj.name if obj.name else "Не указан"
+    name_col.short_description = "Наименование"
+    name_col.admin_order_field = 'name'
+
+    def description_col(self, obj):
+        return obj.description if obj.description else "Не указан"
+    description_col.short_description = "Описание"
+    description_col.admin_order_field = 'description'
+
+
 # Словарь: модель -> класс админки
 CUSTOM_ADMINS = {
     'Slot': SlotAdmin,
     'Order': OrderAdmin,
     'User': UserAdmin,
+    'AcademicSubject': AcademicSubjectAdmin
 }
 
 # Динамическая регистрация моделей
-MODELS_TO_INCLUDE = ['Slot', 'Order', 'User']
+MODELS_TO_INCLUDE = ['Slot', 'Order', 'User', 'AcademicSubject']
 app_models = apps.get_app_config('edu_meet_admin_panel').get_models()
 
 for model in app_models:
