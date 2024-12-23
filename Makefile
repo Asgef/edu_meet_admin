@@ -50,3 +50,6 @@ staticfiles:
 
 load_user:
 	python manage.py loaddata admin_users.json
+
+generate_slots:
+	python manage.py init_slots
