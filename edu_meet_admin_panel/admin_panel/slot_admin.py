@@ -1,8 +1,79 @@
 from django.contrib import admin
 from edu_meet_admin_panel.models import Slot
 from django import forms
+from django.contrib.admin import SimpleListFilter
+from django.contrib.admin import DateFieldListFilter
+from django.utils.timezone import now
+from datetime import datetime, timedelta
 
 
+class CustomDateFilter(SimpleListFilter):
+    title = 'Дата'
+    parameter_name = 'date'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('Any', 'Любая'),
+            ('Today', 'Сегодня'),
+            ('Past 7 days', 'За последние 7 дней'),
+            ('This month', 'Этот месяц'),
+            ('This year', 'Этот год'),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'Today':
+            today = now().date()
+            return queryset.filter(date=today)
+        elif self.value() == 'Past 7 days':
+            today = now().date()
+            seven_days_ago = today - timedelta(days=7)
+            return queryset.filter(date__range=(seven_days_ago, today))
+        elif self.value() == 'This month':
+            today = now()
+            start_of_month = today.replace(day=1).date()
+            return queryset.filter(date__range=(start_of_month, today.date()))
+        elif self.value() == 'This year':
+            today = now()
+            start_of_year = today.replace(month=1, day=1).date()
+            return queryset.filter(date__range=(start_of_year, today.date()))
+        elif self.value() == 'Any':
+            return queryset
+        return queryset
+
+
+class CustomStatusFilter(SimpleListFilter):
+    title = 'Статус'
+    parameter_name = 'status'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('available', 'Доступен'),
+            ('pending', 'Ожидает подтверждения'),
+            ('accepted', 'Принят'),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(status=self.value())
+        return queryset
+
+# Пользовательский фильтр по часу начала
+class HourStartFilter(SimpleListFilter):
+    title = 'Час начала'
+    parameter_name = 'hour_start'
+
+    def lookups(self, request, model_admin):
+        return [
+            (str(i), f"{i}:00") for i in range(0, 24)
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(time_start__hour=int(self.value()))
+        return queryset
+
+
+# Выпадающий список для статуса
 class SlotAdminForm(forms.ModelForm):
     STATUS_CHOICES = [
         ('available', 'Доступен'),
@@ -23,7 +94,7 @@ class SlotAdmin(admin.ModelAdmin):
         'time_end_col', 'tutor_col', 'student_col', 'comment_col'
     )
     search_fields = ('tutor__username', 'student__username', 'comment')
-    list_filter = ('status', 'date')
+    list_filter = (CustomStatusFilter, CustomDateFilter, HourStartFilter)
 
     def status_col(self, obj):
         return obj.status
