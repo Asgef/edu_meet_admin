@@ -15,3 +15,5 @@ __all__ = [
     "UserAdmin",
     "AcademicSubjectAdmin",
 ]
+
+# Обход проблем с импортами при генерации models.py

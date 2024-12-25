@@ -1,0 +1,10 @@
+<form method="get">
+    {% for key, value in request.GET.items %}
+        {% if key != spec.parameter_name %}
+            <input type="hidden" name="{{ key }}" value="{{ value }}">
+        {% endif %}
+    {% endfor %}
+    <label for="id_specific_date">Введите дату (ГГГГ-ММ-ДД):</label>
+    <input type="date" name="{{ spec.parameter_name }}" id="id_specific_date" value="{{ spec.value|default:'' }}">
+    <input type="submit" value="Применить">
+</form>

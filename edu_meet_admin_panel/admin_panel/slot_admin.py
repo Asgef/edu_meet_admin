@@ -1,5 +1,6 @@
 from django.contrib import admin
-from edu_meet_admin_panel.models import Slot
+from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
+from edu_meet_admin_panel.models import Slot, User
 from django import forms
 from django.contrib.admin import SimpleListFilter
 from django.contrib.admin import DateFieldListFilter
@@ -7,6 +8,7 @@ from django.utils.timezone import now
 from datetime import datetime, timedelta
 
 
+# Кастомный фильтр по дате
 class CustomDateFilter(SimpleListFilter):
     title = 'Дата'
     parameter_name = 'date'
@@ -41,6 +43,60 @@ class CustomDateFilter(SimpleListFilter):
         return queryset
 
 
+class FutureWeeksFilter(SimpleListFilter):
+    title = 'Будущие недели'
+    parameter_name = 'future_week'
+
+    def lookups(self, request, model_admin):
+        today = now().date()
+        # Смещаем `today` к ближайшему понедельнику
+        monday = today - timedelta(days=today.weekday())
+        weeks = [
+            (
+                f"week_{i}",
+                f"Неделя {i + 1} ({(monday + timedelta(weeks=i)).strftime('%d.%m')} - "
+                f"{(monday + timedelta(weeks=i+1) - timedelta(days=1)).strftime('%d.%m')})"
+            )
+            for i in range(0, 5)  # Количество недель для отображения
+        ]
+        return weeks
+
+    def queryset(self, request, queryset):
+        today = now().date()
+        # Смещаем `today` к ближайшему понедельнику
+        monday = today - timedelta(days=today.weekday())
+        if self.value():
+            try:
+                week_num = int(self.value().split('_')[1])
+                start_of_week = monday + timedelta(weeks=week_num)
+                end_of_week = start_of_week + timedelta(days=6)
+                return queryset.filter(date__range=(start_of_week, end_of_week))
+            except (ValueError, IndexError):
+                pass
+        return queryset
+
+
+class SpecificDateFilter(SimpleListFilter):
+    title = 'Фильтр по дате'  # Заголовок фильтра
+    parameter_name = 'specific_date'
+
+    template = 'admin/date_filter.html'  # Свой шаблон для фильтра
+
+    def lookups(self, request, model_admin):
+        return [
+            ('', 'Все')
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            try:
+                specific_date = datetime.strptime(self.value(), '%Y-%m-%d').date()
+                return queryset.filter(date=specific_date)
+            except ValueError:
+                return queryset
+        return queryset
+
+
 class CustomStatusFilter(SimpleListFilter):
     title = 'Статус'
     parameter_name = 'status'
@@ -72,16 +128,37 @@ class HourStartFilter(SimpleListFilter):
             return queryset.filter(time_start__hour=int(self.value()))
         return queryset
 
+class UserChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        username = obj.username
+        first_name = obj.first_name
+        last_name = obj.last_name
+
+        if first_name and last_name:
+            return f"{first_name} {last_name}"
+        return username
+
 
 # Выпадающий список для статуса
 class SlotAdminForm(forms.ModelForm):
+    # корректируем поле статуса
     STATUS_CHOICES = [
         ('available', 'Доступен'),
         ('pending', 'Ожидает подтверждения'),
         ('accepted', 'Принят'),
     ]
-
     status = forms.ChoiceField(choices=STATUS_CHOICES, label="Статус")
+
+    # корректируем имена юзеров. т.к. verbose_name не доступен
+    tutor = UserChoiceField(
+        queryset=User.objects.all(),
+        label="Репетитор"
+    )
+    student = UserChoiceField(
+        queryset=User.objects.all(),
+        label="Ученик",
+        required=False
+    )
 
     class Meta:
         model = Slot
@@ -94,7 +171,10 @@ class SlotAdmin(admin.ModelAdmin):
         'time_end_col', 'tutor_col', 'student_col', 'comment_col'
     )
     search_fields = ('tutor__username', 'student__username', 'comment')
-    list_filter = (CustomStatusFilter, CustomDateFilter, HourStartFilter)
+    list_filter = (
+        CustomStatusFilter, CustomDateFilter, HourStartFilter,
+        FutureWeeksFilter, SpecificDateFilter
+    )
 
     def status_col(self, obj):
         return obj.status
@@ -117,14 +197,22 @@ class SlotAdmin(admin.ModelAdmin):
     time_end_col.admin_order_field = 'time_end'
 
     def tutor_col(self, obj):
-        return obj.tutor.username if obj.tutor else "Не назначен"
+        if obj.tutor:
+            return f"{obj.tutor.first_name} {obj.tutor.last_name}" \
+                if obj.tutor.first_name and obj.tutor.last_name \
+                else obj.tutor.username
+        return "Не назначен"
+
     tutor_col.short_description = "Репетитор"
-    tutor_col.admin_order_field = 'tutor__username'
 
     def student_col(self, obj):
-        return obj.student.username if obj.student else "Не назначен"
+        if obj.student:
+            return f"{obj.student.first_name} {obj.student.last_name}" \
+                if obj.student.first_name and obj.student.last_name \
+                else obj.student.username
+        return "Не назначен"
+
     student_col.short_description = "Ученик"
-    student_col.admin_order_field = 'student__username'
 
     def comment_col(self, obj):
         return obj.comment if obj.comment else "Нет комментария"
