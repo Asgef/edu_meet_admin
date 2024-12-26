@@ -4,16 +4,16 @@ import os
 import sys
 
 
-if "inspectdb" in sys.argv:
-    # Игнорируем proxy_models.py при выполнении inspectdb
-    sys.modules['edu_meet_admin_panel.proxy_models'] = None
-
-
 def main():
     """Run administrative tasks."""
     os.environ.setdefault(
         'DJANGO_SETTINGS_MODULE', 'edu_meet_admin_panel.settings'
     )
+    # Отключаем proxy_models и admin при вызове inspectdb
+    if "inspectdb" in sys.argv:
+        sys.modules['edu_meet_admin_panel.proxy_models'] = None
+        sys.modules['edu_meet_admin_panel.admin'] = None
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
