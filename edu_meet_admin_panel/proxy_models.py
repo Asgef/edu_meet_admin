@@ -1,4 +1,10 @@
-from edu_meet_admin_panel.models import Order, User, Slot, AcademicSubject
+try:
+    from edu_meet_admin_panel.models import Order, User, Slot, AcademicSubject
+except ImportError:
+    Order = None
+    User = None
+    Slot = None
+    AcademicSubject = None
 
 
 class OrderProxy(Order):
