@@ -73,7 +73,10 @@ class OrderAdmin(admin.ModelAdmin):
     tutor_col.admin_order_field = 'tutor__username'
 
     def slot_col(self, obj):
-        return f"Слот {obj.slot.id}" if obj.slot else "Нет слота"
+        return (
+            f"{obj.slot.id} {obj.slot.date} "
+            f"{obj.slot.time_start.strftime('%H:%M')}"
+        ) if obj.slot else "Нет слота"
     slot_col.short_description = "Слот"
     slot_col.admin_order_field = 'slot__id'
 
