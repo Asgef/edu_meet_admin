@@ -2,8 +2,14 @@ from django.contrib import admin
 from edu_meet_admin_panel.admin_panel.user_admin import UserChoiceField
 from edu_meet_admin_panel.models import Slot
 from edu_meet_admin_panel.proxy_models import UserProxy
+from edu_meet_admin_panel.admin_panel.filters import *
 from django import forms
-from edu_meet_admin_panel.admin_panel.filters.slots import *
+
+
+class SlotChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return (f"{obj.date} {obj.time_start.strftime('%H:%M')} - "
+                f"{obj.time_end.strftime('%H:%M')}")
 
 
 # Выпадающий список для статуса
@@ -50,7 +56,7 @@ class SlotAdmin(admin.ModelAdmin):
     )
     search_fields = ('tutor__username', 'student__username', 'comment')
     list_filter = (
-        CustomStatusFilter, CustomDateFilter, HourStartFilter,
+        CustomStatusFilterSlot, CustomDateFilter, HourStartFilter,
         FutureWeeksFilter, SpecificDateFilter
     )
 

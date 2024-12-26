@@ -1,10 +1,15 @@
 from django.contrib import admin
 from edu_meet_admin_panel.admin_panel.slot_admin import SlotChoiceField
 from edu_meet_admin_panel.admin_panel.user_admin import UserChoiceField
-from edu_meet_admin_panel.models import User, Order, AcademicSubject, Slot
+from edu_meet_admin_panel.models import User, Order, AcademicSubject
 from edu_meet_admin_panel.proxy_models import SlotProxy
 from django import forms
 from edu_meet_admin_panel.admin_panel.subject_admin import SubjectChoiceField
+from edu_meet_admin_panel.admin_panel.filters import (
+    CustomDateFilter, FutureWeeksFilter, SpecificDateFilter,
+    CustomStatusFilterOrder, HourStartFilter
+)
+
 
 class OrderAdminForm(forms.ModelForm):
     STATUS_CHOICES = (
@@ -60,7 +65,10 @@ class OrderAdmin(admin.ModelAdmin):
         'status_col', 'date_col', 'comment_col'
     )
     search_fields = ('student__username', 'tutor__username', 'comment')
-    list_filter = ('status',)
+    list_filter = (
+        CustomStatusFilterOrder, CustomDateFilter, FutureWeeksFilter,
+        SpecificDateFilter
+    )
 
     def student_col(self, obj):
         return obj.student.username if obj.student else "Не назначен"

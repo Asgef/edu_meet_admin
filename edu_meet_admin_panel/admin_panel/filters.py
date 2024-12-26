@@ -1,7 +1,7 @@
 from django.contrib.admin import SimpleListFilter
 from django.utils.timezone import now
 from datetime import datetime, timedelta
-from django import forms
+from django.utils.timezone import make_aware, now
 
 
 class CustomDateFilter(SimpleListFilter):
@@ -18,21 +18,42 @@ class CustomDateFilter(SimpleListFilter):
         ]
 
     def queryset(self, request, queryset):
+        # Текущая дата и время с учётом часового пояса
+        today = now()
+
         if self.value() == 'Today':
-            today = now().date()
-            return queryset.filter(date=today)
+            start_of_day = make_aware(
+                datetime(
+                    today.year, today.month, today.day,
+                    0,0, 0
+                )
+            )
+            end_of_day = make_aware(
+                datetime(
+                    today.year, today.month, today.day,
+                    23, 59, 59
+                )
+            )
+            return queryset.filter(date__range=(start_of_day, end_of_day))
         elif self.value() == 'Past 7 days':
-            today = now().date()
-            seven_days_ago = today - timedelta(days=7)
+            seven_days_ago = make_aware(
+                datetime(
+                    today.year, today.month, today.day
+                ) - timedelta(days=7)
+            )
             return queryset.filter(date__range=(seven_days_ago, today))
         elif self.value() == 'This month':
-            today = now()
-            start_of_month = today.replace(day=1).date()
-            return queryset.filter(date__range=(start_of_month, today.date()))
+            start_of_month = make_aware(datetime(
+                today.year, today.month, 1, 0, 0, 0
+            ))
+            return queryset.filter(date__range=(start_of_month, today))
         elif self.value() == 'This year':
-            today = now()
-            start_of_year = today.replace(month=1, day=1).date()
-            return queryset.filter(date__range=(start_of_year, today.date()))
+            start_of_year = make_aware(
+                datetime(
+                    today.year, 1, 1, 0, 0, 0
+                )
+            )
+            return queryset.filter(date__range=(start_of_year, today))
         elif self.value() == 'Any':
             return queryset
         return queryset
@@ -49,22 +70,23 @@ class FutureWeeksFilter(SimpleListFilter):
         weeks = [
             (
                 f"week_{i}",
-                f"Неделя {i + 1} ({(monday + timedelta(weeks=i)).strftime('%d.%m')} - "
-                f"{(monday + timedelta(weeks=i+1) - timedelta(days=1)).strftime('%d.%m')})"
+                f"Неделя {i + 1} ("
+                f"{(monday + timedelta(weeks=i)).strftime('%d.%m')} - "
+                f"{(monday + timedelta(weeks=i+1) - timedelta(days=1)).strftime('%d.%m')})"  # noqa
             )
             for i in range(0, 5)  # Количество недель для отображения
         ]
         return weeks
 
     def queryset(self, request, queryset):
-        today = now().date()
+        today = now()
         # Смещаем `today` к ближайшему понедельнику
         monday = today - timedelta(days=today.weekday())
         if self.value():
             try:
                 week_num = int(self.value().split('_')[1])
-                start_of_week = monday + timedelta(weeks=week_num)
-                end_of_week = start_of_week + timedelta(days=6)
+                start_of_week = make_aware(monday + timedelta(weeks=week_num))
+                end_of_week = make_aware(start_of_week + timedelta(days=6, seconds=86399))
                 return queryset.filter(date__range=(start_of_week, end_of_week))
             except (ValueError, IndexError):
                 pass
@@ -72,10 +94,10 @@ class FutureWeeksFilter(SimpleListFilter):
 
 
 class SpecificDateFilter(SimpleListFilter):
-    title = 'Фильтр по дате'  # Заголовок фильтра
+    title = 'Фильтр по дате'
     parameter_name = 'specific_date'
 
-    template = 'admin/date_filter.html'  # Свой шаблон для фильтра
+    template = 'admin/date_filter.html'
 
     def lookups(self, request, model_admin):
         return [
@@ -86,13 +108,15 @@ class SpecificDateFilter(SimpleListFilter):
         if self.value():
             try:
                 specific_date = datetime.strptime(self.value(), '%Y-%m-%d').date()
-                return queryset.filter(date=specific_date)
+                specific_datetime = datetime.combine(specific_date, datetime.min.time())
+                specific_datetime_aware = make_aware(specific_datetime)
+                return queryset.filter(date=specific_datetime_aware)
             except ValueError:
                 return queryset
         return queryset
 
 
-class CustomStatusFilter(SimpleListFilter):
+class CustomStatusFilterSlot(SimpleListFilter):
     title = 'Статус'
     parameter_name = 'status'
 
@@ -124,7 +148,20 @@ class HourStartFilter(SimpleListFilter):
         return queryset
 
 
-class SlotChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        return (f"{obj.date} {obj.time_start.strftime('%H:%M')} - "
-                f"{obj.time_end.strftime('%H:%M')}")
+class CustomStatusFilterOrder(SimpleListFilter):
+    title = 'Статус'
+    parameter_name = 'status'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('pending', 'Ожидает подтверждения'),
+            ('accepted', 'Принят'),
+            ('declined', 'Отклонен'),
+            ('canceled', 'Закрыт'),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(status=self.value())
+        return queryset
+
