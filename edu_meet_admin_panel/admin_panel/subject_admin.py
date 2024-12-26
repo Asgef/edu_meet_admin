@@ -1,8 +1,28 @@
 from django.contrib import admin
-from django.apps import apps
+from django import forms
+from edu_meet_admin_panel.models import AcademicSubject
+
+
+class SubjectChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.name
+
+
+class SubjectAdminForm(forms.ModelForm):
+    class Meta:
+        model = AcademicSubject
+        fields = '__all__'
+        labels = {
+            'name': 'Наименование',
+            'description': 'Описание',
+            'created_at': 'Дата создания',
+            'updated_at': 'Последнее обновление',
+        }
+
 
 
 class AcademicSubjectAdmin(admin.ModelAdmin):
+    form = SubjectAdminForm
     list_display = (
         'name_col', 'description_col', 'created_at', 'updated_at'
     )

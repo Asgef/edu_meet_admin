@@ -1,8 +1,60 @@
 from django.contrib import admin
-from django.apps import apps
+from edu_meet_admin_panel.admin_panel.slot_admin import SlotChoiceField
+from edu_meet_admin_panel.admin_panel.user_admin import UserChoiceField
+from edu_meet_admin_panel.models import User, Order, AcademicSubject, Slot
+from edu_meet_admin_panel.proxy_models import SlotProxy
+from django import forms
+from edu_meet_admin_panel.admin_panel.subject_admin import SubjectChoiceField
 
+class OrderAdminForm(forms.ModelForm):
+    STATUS_CHOICES = (
+        ('pending', 'Ожидает подтверждения'),
+        ('accepted', 'Принят'),
+        ('declined', 'Отклонен'),
+        ('canceled', 'Закрыт'),
+    )
+    status = forms.ChoiceField(choices=STATUS_CHOICES, label="Статус")
+
+    tutor = UserChoiceField(
+        queryset=User.objects.all(),
+        label="Репетитор"
+    )
+    student = UserChoiceField(
+        queryset=User.objects.all(),
+        label="Ученик",
+        required=False
+    )
+    subject = SubjectChoiceField(
+        queryset= AcademicSubject.objects.all(),
+        label="Предмет"
+    )
+    slot = SlotChoiceField(
+        queryset=SlotProxy.objects.all(),
+        label="Слот"
+    )
+    comment = forms.CharField(
+        widget=forms.Textarea,
+        label="Комментарий",
+        required=False
+    )
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+        labels = {
+            'date': 'Дата',
+            'created_at': 'Дата создания',
+            'updated_at': 'Последнее обновление',
+            'slot': 'Слот',
+            'comment': 'Комментарий',
+            'status': 'Статус',
+            'subject': 'Предмет',
+            'tutor': 'Репетитор',
+            'student': 'Ученик',
+        }
 
 class OrderAdmin(admin.ModelAdmin):
+    form = OrderAdminForm
     list_display = (
         'id', 'student_col', 'tutor_col', 'slot_col', 'subject_col',
         'status_col', 'date_col', 'comment_col'
@@ -31,7 +83,13 @@ class OrderAdmin(admin.ModelAdmin):
     subject_col.admin_order_field = 'subject__name'
 
     def status_col(self, obj):
-        return obj.status
+        choices = {
+            'pending': 'Ожидает подтверждения',
+            'accepted': 'Принят',
+            'declined': 'Отклонен',
+            'canceled': 'Закрыт',
+        }
+        return choices.get(obj.status, obj.status)
     status_col.short_description = "Статус"
     status_col.admin_order_field = 'status'
 

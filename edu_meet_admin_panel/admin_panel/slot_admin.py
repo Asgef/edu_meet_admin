@@ -1,9 +1,9 @@
 from django.contrib import admin
-from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
-from edu_meet_admin_panel.models import Slot, User
+from edu_meet_admin_panel.admin_panel.user_admin import UserChoiceField
+from edu_meet_admin_panel.models import Slot
+from edu_meet_admin_panel.proxy_models import UserProxy
 from django import forms
 from django.contrib.admin import SimpleListFilter
-from django.contrib.admin import DateFieldListFilter
 from django.utils.timezone import now
 from datetime import datetime, timedelta
 
@@ -128,15 +128,11 @@ class HourStartFilter(SimpleListFilter):
             return queryset.filter(time_start__hour=int(self.value()))
         return queryset
 
-class UserChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        username = obj.username
-        first_name = obj.first_name
-        last_name = obj.last_name
 
-        if first_name and last_name:
-            return f"{first_name} {last_name}"
-        return username
+class SlotChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return (f"{obj.date} {obj.time_start.strftime('%H:%M')} - "
+                f"{obj.time_end.strftime('%H:%M')}")
 
 
 # Выпадающий список для статуса
@@ -149,20 +145,31 @@ class SlotAdminForm(forms.ModelForm):
     ]
     status = forms.ChoiceField(choices=STATUS_CHOICES, label="Статус")
 
-    # корректируем имена юзеров. т.к. verbose_name не доступен
     tutor = UserChoiceField(
-        queryset=User.objects.all(),
+        queryset=UserProxy.objects.all(),
         label="Репетитор"
     )
     student = UserChoiceField(
-        queryset=User.objects.all(),
+        queryset=UserProxy.objects.all(),
         label="Ученик",
         required=False
     )
-
+    comment= forms.CharField(
+        widget=forms.Textarea,
+        label="Комментарий",
+        required=False
+    )
     class Meta:
         model = Slot
         fields = '__all__'
+        labels = {
+            'date': 'Дата',
+            'time_start': 'Начало времени',
+            'time_end': 'Конец времени',
+            'tutor': 'Репетитор',
+            'student': 'Ученик',
+            'comment': 'Комментарий'
+        }
 
 class SlotAdmin(admin.ModelAdmin):
     form = SlotAdminForm
@@ -175,11 +182,6 @@ class SlotAdmin(admin.ModelAdmin):
         CustomStatusFilter, CustomDateFilter, HourStartFilter,
         FutureWeeksFilter, SpecificDateFilter
     )
-
-    def status_col(self, obj):
-        return obj.status
-    status_col.short_description = "Статус"
-    status_col.admin_order_field = 'status'
 
     def date_col(self, obj):
         return obj.date.strftime("%d.%m.%Y")
@@ -235,7 +237,6 @@ class SlotAdmin(admin.ModelAdmin):
             'accepted': 'Принят',
         }
         return choices.get(obj.status, obj.status)
-
     status_col.short_description = "Статус"
     status_col.admin_order_field = 'status'
 

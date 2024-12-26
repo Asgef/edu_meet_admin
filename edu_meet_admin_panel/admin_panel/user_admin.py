@@ -1,8 +1,39 @@
 from django.contrib import admin
+from django import forms
+from edu_meet_admin_panel.models import User
 from django.apps import apps
 
 
+class UserChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        username = obj.username
+        first_name = obj.first_name
+        last_name = obj.last_name
+
+        if first_name and last_name:
+            return f"{first_name} {last_name}"
+        return username
+
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = '__all__'
+        labels = {
+            'username': 'Никнейм',
+            'first_name': 'Имя',
+            'last_name': 'Фамилия',
+            'is_admin': 'Администратор',
+            'timezone': 'Часовой пояс',
+            'last_activity': 'Последняя активность',
+            'created_at': 'Дата регистрации',
+            'updated_at': 'Последнее обновление',
+        }
+
+
+
 class UserAdmin(admin.ModelAdmin):
+    form = UserForm
     list_display = (
         'id', 'tg_id', 'username_col', 'is_admin_col', 'timezone',
         'first_name_col', 'last_name_col', 'created_at_col'
