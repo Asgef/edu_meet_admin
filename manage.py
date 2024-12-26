@@ -4,6 +4,11 @@ import os
 import sys
 
 
+if "inspectdb" in sys.argv:
+    # Игнорируем proxy_models.py при выполнении inspectdb
+    sys.modules['edu_meet_admin_panel.proxy_models'] = None
+
+
 def main():
     """Run administrative tasks."""
     os.environ.setdefault(
