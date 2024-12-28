@@ -1,5 +1,4 @@
 from django.contrib.admin import SimpleListFilter
-from django.utils.timezone import now
 from datetime import datetime, timedelta
 from django.utils.timezone import make_aware, now
 
@@ -87,7 +86,9 @@ class FutureWeeksFilter(SimpleListFilter):
                 week_num = int(self.value())
                 start_of_week = monday + timedelta(weeks=week_num)
                 end_of_week = start_of_week + timedelta(days=6, seconds=86399)
-                return queryset.filter(date__range=(start_of_week, end_of_week))
+                return queryset.filter(
+                    date__range=(start_of_week, end_of_week)
+                )
             except ValueError:
                 pass
         return queryset
@@ -106,8 +107,12 @@ class SpecificDateFilter(SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value():
             try:
-                specific_date = datetime.strptime(self.value(), '%Y-%m-%d').date()
-                specific_datetime = datetime.combine(specific_date, datetime.min.time())
+                specific_date = datetime.strptime(
+                    self.value(),'%Y-%m-%d'
+                ).date()
+                specific_datetime = datetime.combine(
+                    specific_date, datetime.min.time()
+                )
                 specific_datetime_aware = make_aware(specific_datetime)
                 return queryset.filter(date=specific_datetime_aware)
             except ValueError:

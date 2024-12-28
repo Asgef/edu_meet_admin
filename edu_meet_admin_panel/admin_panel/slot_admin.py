@@ -4,6 +4,7 @@ from edu_meet_admin_panel.models import Slot
 from edu_meet_admin_panel.proxy_models import UserProxy
 from edu_meet_admin_panel.admin_panel.filters import *
 from django import forms
+from django.contrib import messages
 
 
 class SlotChoiceField(forms.ModelChoiceField):
@@ -17,6 +18,7 @@ class SlotAdminForm(forms.ModelForm):
     # корректируем поле статуса
     STATUS_CHOICES = [
         ('available', 'Доступен'),
+        ('unavailable', 'Недоступен'),
         ('pending', 'Ожидает подтверждения'),
         ('accepted', 'Принят'),
     ]
@@ -49,6 +51,7 @@ class SlotAdminForm(forms.ModelForm):
         }
 
 class SlotAdmin(admin.ModelAdmin):
+    actions = ['set_status_available', 'set_status_unavailable']
     form = SlotAdminForm
     list_display = (
         'id', 'status_col', 'slot_col','date_col', 'time_start_col',
@@ -102,24 +105,40 @@ class SlotAdmin(admin.ModelAdmin):
     comment_col.short_description = "Комментарий"
     comment_col.admin_order_field = 'comment'
 
-    def get_form(self, request, obj=None, **kwargs):
-        form = super().get_form(request, obj, **kwargs)
-        form.base_fields['status'].choices = [
-            ('available', 'Доступен'),
-            ('pending', 'Ожидает подтверждения'),
-            ('accepted', 'Принят'),
-        ]
-        return form
+    # def get_form(self, request, obj=None, **kwargs):
+    #     form = super().get_form(request, obj, **kwargs)
+    #     form.base_fields['status'].choices = [
+    #         ('available', 'Доступен'),
+    #         ('unavailable', 'Недоступен'),
+    #         ('pending', 'Ожидает подтверждения'),
+    #         ('accepted', 'Принят'),
+    #     ]
+    #     return form
 
     def status_col(self, obj):
         choices = {
             'available': 'Доступен',
+            'unavailable': 'Недоступен',
             'pending': 'Ожидает подтверждения',
             'accepted': 'Принят',
         }
         return choices.get(obj.status, obj.status)
     status_col.short_description = "Статус"
     status_col.admin_order_field = 'status'
+
+    def set_status_available(self, request, queryset):
+        updated = queryset.update(status='available')
+        self.message_user(request, f"{updated} слотов отмечены как 'Доступен'",
+                          messages.SUCCESS)
+
+    set_status_available.short_description = "Отметить как 'Доступен'"
+
+    def set_status_unavailable(self, request, queryset):
+        updated = queryset.update(status='unavailable')
+        self.message_user(request, f"{updated} слотов отмечены как 'Недоступен'",
+                          messages.SUCCESS)
+
+    set_status_unavailable.short_description = "Отметить как 'Недоступен'"
 
 
 __all__ = ['SlotAdmin']

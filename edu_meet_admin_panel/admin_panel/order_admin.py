@@ -9,6 +9,7 @@ from edu_meet_admin_panel.admin_panel.filters import (
     CustomDateFilter, FutureWeeksFilter, SpecificDateFilter,
     CustomStatusFilterOrder
 )
+from django.contrib import messages
 
 
 class OrderAdminForm(forms.ModelForm):
@@ -59,6 +60,9 @@ class OrderAdminForm(forms.ModelForm):
         }
 
 class OrderAdmin(admin.ModelAdmin):
+    actions = [
+        'set_status_accepted', 'set_status_declined', 'set_status_canceled'
+    ]
     form = OrderAdminForm
     list_display = (
         'id', 'student_col', 'tutor_col', 'slot_col', 'subject_col',
@@ -113,5 +117,32 @@ class OrderAdmin(admin.ModelAdmin):
         return obj.comment if obj.comment else "Нет комментария"
     comment_col.short_description = "Комментарий"
     comment_col.admin_order_field = 'comment'
+
+    def set_status_accepted(self, request, queryset):
+        updated = queryset.update(status='accepted')
+        self.message_user(
+            request,
+            f"{updated} заявок отмечены как 'Принят'",
+            messages.SUCCESS
+        )
+    set_status_accepted.short_description = "Отметить как 'Принят'"
+
+    def set_status_declined(self, request, queryset):
+        updated = queryset.update(status='declined')
+        self.message_user(
+            request,
+            f"{updated} заявок отмечены как 'Отклонен'",
+            messages.SUCCESS
+        )
+    set_status_declined.short_description = "Отметить как 'Отклонен'"
+
+    def set_status_canceled(self, request, queryset):
+        updated = queryset.update(status='canceled')
+        self.message_user(
+            request,
+            f"{updated} заявок отмечены как 'Закрыт'",
+            messages.SUCCESS
+        )
+    set_status_canceled.short_description = "Отметить как 'Закрыт'"
 
 __all__ = ['OrderAdmin']
