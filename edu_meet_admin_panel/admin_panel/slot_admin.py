@@ -1,7 +1,7 @@
 from django.contrib import admin
 from edu_meet_admin_panel.admin_panel.user_admin import UserChoiceField
 from edu_meet_admin_panel.models import Slot
-from edu_meet_admin_panel.proxy_models import UserProxy
+from edu_meet_admin_panel.proxy_models import UserProxy, SlotProxy
 from edu_meet_admin_panel.admin_panel.filters import *
 from django import forms
 from django.contrib import messages
@@ -39,7 +39,7 @@ class SlotAdminForm(forms.ModelForm):
         required=False
     )
     class Meta:
-        model = Slot
+        model = SlotProxy
         fields = '__all__'
         labels = {
             'date': 'Дата',

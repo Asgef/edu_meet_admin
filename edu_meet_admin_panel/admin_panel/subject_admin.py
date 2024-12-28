@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django import forms
 from edu_meet_admin_panel.models import AcademicSubject
+from edu_meet_admin_panel.proxy_models import AcademicSubjectProxy
 
 
 class SubjectChoiceField(forms.ModelChoiceField):
@@ -10,7 +11,7 @@ class SubjectChoiceField(forms.ModelChoiceField):
 
 class SubjectAdminForm(forms.ModelForm):
     class Meta:
-        model = AcademicSubject
+        model = AcademicSubjectProxy
         fields = '__all__'
         labels = {
             'name': 'Наименование',

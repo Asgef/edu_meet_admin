@@ -3,6 +3,8 @@ from django import forms
 from edu_meet_admin_panel.models import User
 from django.apps import apps
 
+from edu_meet_admin_panel.proxy_models import UserProxy
+
 
 class UserChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
@@ -17,7 +19,7 @@ class UserChoiceField(forms.ModelChoiceField):
 
 class UserForm(forms.ModelForm):
     class Meta:
-        model = User
+        model = UserProxy
         fields = '__all__'
         labels = {
             'username': 'Никнейм',

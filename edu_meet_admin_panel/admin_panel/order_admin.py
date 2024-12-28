@@ -2,7 +2,7 @@ from django.contrib import admin
 from edu_meet_admin_panel.admin_panel.slot_admin import SlotChoiceField
 from edu_meet_admin_panel.admin_panel.user_admin import UserChoiceField
 from edu_meet_admin_panel.models import User, Order, AcademicSubject
-from edu_meet_admin_panel.proxy_models import SlotProxy
+from edu_meet_admin_panel.models import Slot
 from django import forms
 from edu_meet_admin_panel.admin_panel.subject_admin import SubjectChoiceField
 from edu_meet_admin_panel.admin_panel.filters import (
@@ -10,6 +10,13 @@ from edu_meet_admin_panel.admin_panel.filters import (
     CustomStatusFilterOrder
 )
 from django.contrib import messages
+from django.utils.html import format_html
+from django.forms import widgets
+from django.utils.safestring import mark_safe
+from django.urls import reverse
+from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
+
+from edu_meet_admin_panel.proxy_models import OrderProxy
 
 
 class OrderAdminForm(forms.ModelForm):
@@ -35,7 +42,7 @@ class OrderAdminForm(forms.ModelForm):
         label="Предмет"
     )
     slot = SlotChoiceField(
-        queryset=SlotProxy.objects.all(),
+        queryset=Slot.objects.all(),
         label="Слот"
     )
     comment = forms.CharField(
@@ -45,7 +52,7 @@ class OrderAdminForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Order
+        model = OrderProxy
         fields = '__all__'
         labels = {
             'date': 'Дата',
@@ -58,6 +65,7 @@ class OrderAdminForm(forms.ModelForm):
             'tutor': 'Репетитор',
             'student': 'Ученик',
         }
+
 
 class OrderAdmin(admin.ModelAdmin):
     actions = [
@@ -73,6 +81,41 @@ class OrderAdmin(admin.ModelAdmin):
         CustomStatusFilterOrder, CustomDateFilter, FutureWeeksFilter,
         SpecificDateFilter
     )
+    readonly_fields = ['slot_link', 'subject_link', 'student_link']
+
+    def student_link(self, obj):
+        if obj and obj.student:
+            # Генерация ссылки на объект User в вашей модели
+            url = reverse('admin:edu_meet_admin_panel_userproxy_change',
+                          args=[obj.student.id])
+            return format_html(
+                '<a href="{}" target="_blank">Перейти к ученику</a>', url)
+        return "Нет данных"
+
+    student_link.short_description = "Ученик"
+
+    def slot_link(self, obj):
+        if obj and obj.slot:
+            # Генерация ссылки на объект Slot
+            url = reverse('admin:edu_meet_admin_panel_slotproxy_change',
+                          args=[obj.slot.id])
+            return format_html(
+                '<a href="{}" target="_blank">Перейти к слоту</a>', url)
+        return "Нет данных"
+
+    slot_link.short_description = "Слот"
+
+    def subject_link(self, obj):
+        if obj and obj.subject:
+            # Генерация ссылки на объект AcademicSubject
+            url = reverse(
+                'admin:edu_meet_admin_panel_academicsubjectproxy_change',
+                args=[obj.subject.id])
+            return format_html(
+                '<a href="{}" target="_blank">Перейти к предмету</a>', url)
+        return "Нет данных"
+
+    subject_link.short_description = "Предмет"
 
     def student_col(self, obj):
         return obj.student.username if obj.student else "Не назначен"
@@ -144,5 +187,7 @@ class OrderAdmin(admin.ModelAdmin):
             messages.SUCCESS
         )
     set_status_canceled.short_description = "Отметить как 'Закрыт'"
+
+
 
 __all__ = ['OrderAdmin']
