@@ -7,7 +7,7 @@ from django import forms
 from edu_meet_admin_panel.admin_panel.subject_admin import SubjectChoiceField
 from edu_meet_admin_panel.admin_panel.filters import (
     CustomDateFilter, FutureWeeksFilter, SpecificDateFilter,
-    CustomStatusFilterOrder, HourStartFilter
+    CustomStatusFilterOrder
 )
 
 

@@ -69,7 +69,7 @@ class FutureWeeksFilter(SimpleListFilter):
         monday = today - timedelta(days=today.weekday())
         weeks = [
             (
-                f"week_{i}",
+                f"{i}",
                 f"Неделя {i + 1} ("
                 f"{(monday + timedelta(weeks=i)).strftime('%d.%m')} - "
                 f"{(monday + timedelta(weeks=i+1) - timedelta(days=1)).strftime('%d.%m')})"  # noqa
@@ -84,14 +84,13 @@ class FutureWeeksFilter(SimpleListFilter):
         monday = today - timedelta(days=today.weekday())
         if self.value():
             try:
-                week_num = int(self.value().split('_')[1])
-                start_of_week = make_aware(monday + timedelta(weeks=week_num))
-                end_of_week = make_aware(start_of_week + timedelta(days=6, seconds=86399))
+                week_num = int(self.value())
+                start_of_week = monday + timedelta(weeks=week_num)
+                end_of_week = start_of_week + timedelta(days=6, seconds=86399)
                 return queryset.filter(date__range=(start_of_week, end_of_week))
-            except (ValueError, IndexError):
+            except ValueError:
                 pass
         return queryset
-
 
 class SpecificDateFilter(SimpleListFilter):
     title = 'Фильтр по дате'
