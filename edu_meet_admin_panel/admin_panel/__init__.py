@@ -2,7 +2,7 @@ try:
     from edu_meet_admin_panel.admin_panel.slot_admin import SlotAdmin
     from edu_meet_admin_panel.admin_panel.order_admin import OrderAdmin
     from edu_meet_admin_panel.admin_panel.user_admin import UserAdmin
-    from edu_meet_admin_panel.admin_panel.subject_admin import AcademicSubjectAdmin
+    from edu_meet_admin_panel.admin_panel.subject_admin import AcademicSubjectAdmin # noqa E501
 except ImportError:
     SlotAdmin = None
     OrderAdmin = None

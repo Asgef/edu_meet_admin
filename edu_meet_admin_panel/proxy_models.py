@@ -1,7 +1,6 @@
 from edu_meet_admin_panel.models import Order, User, Slot, AcademicSubject
 
 
-
 class OrderProxy(Order):
     class Meta:
         proxy = True
@@ -27,6 +26,7 @@ class UserProxy(User):
         if self.first_name and self.last_name:
             return f"{self.first_name} {self.last_name}"
         return self.username
+
 
 class SlotProxy(Slot):
     class Meta:

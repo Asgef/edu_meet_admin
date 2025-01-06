@@ -24,7 +24,7 @@ class CustomDateFilter(SimpleListFilter):
             start_of_day = make_aware(
                 datetime(
                     today.year, today.month, today.day,
-                    0,0, 0
+                    0, 0, 0
                 )
             )
             end_of_day = make_aware(
@@ -93,6 +93,7 @@ class FutureWeeksFilter(SimpleListFilter):
                 pass
         return queryset
 
+
 class SpecificDateFilter(SimpleListFilter):
     title = 'Фильтр по дате'
     parameter_name = 'specific_date'
@@ -108,7 +109,7 @@ class SpecificDateFilter(SimpleListFilter):
         if self.value():
             try:
                 specific_date = datetime.strptime(
-                    self.value(),'%Y-%m-%d'
+                    self.value(), '%Y-%m-%d'
                 ).date()
                 specific_datetime = datetime.combine(
                     specific_date, datetime.min.time()
@@ -135,6 +136,7 @@ class CustomStatusFilterSlot(SimpleListFilter):
         if self.value():
             return queryset.filter(status=self.value())
         return queryset
+
 
 # Пользовательский фильтр по часу начала
 class HourStartFilter(SimpleListFilter):
@@ -168,4 +170,3 @@ class CustomStatusFilterOrder(SimpleListFilter):
         if self.value():
             return queryset.filter(status=self.value())
         return queryset
-

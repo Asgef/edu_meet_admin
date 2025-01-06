@@ -1,8 +1,5 @@
 from django.contrib import admin
 from django import forms
-from edu_meet_admin_panel.models import User
-from django.apps import apps
-
 from edu_meet_admin_panel.proxy_models import UserProxy
 
 
@@ -31,7 +28,6 @@ class UserForm(forms.ModelForm):
             'created_at': 'Дата регистрации',
             'updated_at': 'Последнее обновление',
         }
-
 
 
 class UserAdmin(admin.ModelAdmin):

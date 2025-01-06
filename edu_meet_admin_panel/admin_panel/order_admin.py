@@ -1,7 +1,7 @@
 from django.contrib import admin
 from edu_meet_admin_panel.admin_panel.slot_admin import SlotChoiceField
 from edu_meet_admin_panel.admin_panel.user_admin import UserChoiceField
-from edu_meet_admin_panel.models import User, Order, AcademicSubject
+from edu_meet_admin_panel.models import User, AcademicSubject
 from edu_meet_admin_panel.models import Slot
 from django import forms
 from edu_meet_admin_panel.admin_panel.subject_admin import SubjectChoiceField
@@ -11,11 +11,8 @@ from edu_meet_admin_panel.admin_panel.filters import (
 )
 from django.contrib import messages
 from django.utils.html import format_html
-from django.forms import widgets
-from django.utils.safestring import mark_safe
 from django.urls import reverse
-from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
-
+from django.conf import settings
 from edu_meet_admin_panel.proxy_models import OrderProxy
 
 
@@ -38,7 +35,7 @@ class OrderAdminForm(forms.ModelForm):
         required=False
     )
     subject = SubjectChoiceField(
-        queryset= AcademicSubject.objects.all(),
+        queryset=AcademicSubject.objects.all(),
         label="Предмет"
     )
     slot = SlotChoiceField(
@@ -188,6 +185,15 @@ class OrderAdmin(admin.ModelAdmin):
         )
     set_status_canceled.short_description = "Отметить как 'Закрыт'"
 
+    # Установим репетитора по умолчанию в форме
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+
+        default_tutor_id = User.objects.get(tg_id=settings.TUTOR_TG_ID).id
+        if not obj:
+            form.base_fields['tutor'].initial = default_tutor_id
+
+        return form
 
 
 __all__ = ['OrderAdmin']

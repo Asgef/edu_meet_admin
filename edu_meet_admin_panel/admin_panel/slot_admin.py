@@ -1,8 +1,10 @@
 from django.contrib import admin
+from edu_meet_admin_panel.admin_panel.filters import (
+    CustomStatusFilterSlot, CustomDateFilter, FutureWeeksFilter,
+    SpecificDateFilter, HourStartFilter
+)
 from edu_meet_admin_panel.admin_panel.user_admin import UserChoiceField
-from edu_meet_admin_panel.models import Slot
 from edu_meet_admin_panel.proxy_models import UserProxy, SlotProxy
-from edu_meet_admin_panel.admin_panel.filters import *
 from django import forms
 from django.contrib import messages
 
@@ -33,11 +35,12 @@ class SlotAdminForm(forms.ModelForm):
         label="Ученик",
         required=False
     )
-    comment= forms.CharField(
+    comment = forms.CharField(
         widget=forms.Textarea,
         label="Комментарий",
         required=False
     )
+
     class Meta:
         model = SlotProxy
         fields = '__all__'
@@ -50,11 +53,12 @@ class SlotAdminForm(forms.ModelForm):
             'comment': 'Комментарий'
         }
 
+
 class SlotAdmin(admin.ModelAdmin):
     actions = ['set_status_available', 'set_status_unavailable']
     form = SlotAdminForm
     list_display = (
-        'id', 'status_col', 'slot_col','date_col', 'time_start_col',
+        'id', 'status_col', 'slot_col', 'date_col', 'time_start_col',
         'time_end_col', 'tutor_col', 'student_col', 'comment_col'
     )
     search_fields = ('tutor__username', 'student__username', 'comment')
@@ -105,16 +109,6 @@ class SlotAdmin(admin.ModelAdmin):
     comment_col.short_description = "Комментарий"
     comment_col.admin_order_field = 'comment'
 
-    # def get_form(self, request, obj=None, **kwargs):
-    #     form = super().get_form(request, obj, **kwargs)
-    #     form.base_fields['status'].choices = [
-    #         ('available', 'Доступен'),
-    #         ('unavailable', 'Недоступен'),
-    #         ('pending', 'Ожидает подтверждения'),
-    #         ('accepted', 'Принят'),
-    #     ]
-    #     return form
-
     def status_col(self, obj):
         choices = {
             'available': 'Доступен',
@@ -135,8 +129,10 @@ class SlotAdmin(admin.ModelAdmin):
 
     def set_status_unavailable(self, request, queryset):
         updated = queryset.update(status='unavailable')
-        self.message_user(request, f"{updated} слотов отмечены как 'Недоступен'",
-                          messages.SUCCESS)
+        self.message_user(
+            request,
+            f"{updated} слотов отмечены как 'Недоступен'", messages.SUCCESS
+        )
 
     set_status_unavailable.short_description = "Отметить как 'Недоступен'"
 

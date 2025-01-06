@@ -35,6 +35,7 @@ PRODUCTION = os.getenv('PRODUCTION', 'False') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
+TUTOR_TG_ID = os.getenv('TUTOR_TG_ID')
 
 # Application definition
 

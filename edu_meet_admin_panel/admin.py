@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.apps import apps
 from edu_meet_admin_panel.admin_panel import (
     SlotAdmin, OrderAdmin, UserAdmin, AcademicSubjectAdmin
 )

@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django import forms
-from edu_meet_admin_panel.models import AcademicSubject
 from edu_meet_admin_panel.proxy_models import AcademicSubjectProxy
 
 
@@ -21,14 +20,12 @@ class SubjectAdminForm(forms.ModelForm):
         }
 
 
-
 class AcademicSubjectAdmin(admin.ModelAdmin):
     form = SubjectAdminForm
     list_display = (
         'name_col', 'description_col', 'created_at', 'updated_at'
     )
     search_fields = ('name', 'description')
-
 
     def name_col(self, obj):
         return obj.name if obj.name else "Не указан"
@@ -39,5 +36,6 @@ class AcademicSubjectAdmin(admin.ModelAdmin):
         return obj.description if obj.description else "Не указан"
     description_col.short_description = "Описание"
     description_col.admin_order_field = 'description'
+
 
 __all__ = ['AcademicSubjectAdmin']

@@ -1,0 +1,210 @@
+[
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 313,
+        "fields": {
+            "date": "2024-12-06",
+            "time_start": "12:00:00Z",
+            "time_end": "13:00:00Z",
+            "tutor_id": 2,
+            "student_id": null,
+            "comment": "",
+            "status": "unavailable"
+        }
+    },
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 314,
+        "fields": {
+            "date": "2024-12-06",
+            "time_start": "13:00:00Z",
+            "time_end": "14:00:00Z",
+            "tutor_id": 2,
+            "student_id": null,
+            "comment": "",
+            "status": "unavailable"
+        }
+    },
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 315,
+        "fields": {
+            "date": "2024-12-06",
+            "time_start": "14:00:00Z",
+            "time_end": "15:00:00Z",
+            "tutor_id": 2,
+            "student_id": null,
+            "comment": "",
+            "status": "unavailable"
+        }
+    },
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 316,
+        "fields": {
+            "date": "2024-12-06",
+            "time_start": "15:00:00Z",
+            "time_end": "16:00:00Z",
+            "tutor_id": 2,
+            "student_id": null,
+            "comment": "",
+            "status": "unavailable"
+        }
+    },
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 317,
+        "fields": {
+            "date": "2024-12-06",
+            "time_start": "16:00:00Z",
+            "time_end": "17:00:00Z",
+            "tutor_id": 2,
+            "student_id": 2,
+            "comment": "",
+            "status": "pending"
+        }
+    },
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 318,
+        "fields": {
+            "date": "2024-12-06",
+            "time_start": "17:00:00Z",
+            "time_end": "18:00:00Z",
+            "tutor_id": 2,
+            "student_id": null,
+            "comment": "",
+            "status": "unavailable"
+        }
+    },
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 319,
+        "fields": {
+            "date": "2024-12-06",
+            "time_start": "18:00:00Z",
+            "time_end": "19:00:00Z",
+            "tutor_id": 2,
+            "student_id": null,
+            "comment": "",
+            "status": "unavailable"
+        }
+    },
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 320,
+        "fields": {
+            "date": "2024-12-06",
+            "time_start": "19:00:00Z",
+            "time_end": "20:00:00Z",
+            "tutor_id": 2,
+            "student_id": null,
+            "comment": "",
+            "status": "unavailable"
+        }
+    },
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 321,
+        "fields": {
+            "date": "2024-12-09",
+            "time_start": "12:00:00Z",
+            "time_end": "13:00:00Z",
+            "tutor_id": 2,
+            "student_id": null,
+            "comment": "",
+            "status": "available"
+        }
+    },
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 322,
+        "fields": {
+            "date": "2024-12-09",
+            "time_start": "13:00:00Z",
+            "time_end": "14:00:00Z",
+            "tutor_id": 2,
+            "student_id": null,
+            "comment": "",
+            "status": "available"
+        }
+    },
+	    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 323,
+        "fields": {
+            "date": "2024-12-09",
+            "time_start": "14:00:00Z",
+            "time_end": "15:00:00Z",
+            "tutor_id": 2,
+            "student_id": null,
+            "comment": "",
+            "status": "available"
+        }
+    },
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 324,
+        "fields": {
+            "date": "2024-12-09",
+            "time_start": "15:00:00Z",
+            "time_end": "16:00:00Z",
+            "tutor_id": 2,
+            "student_id": null,
+            "comment": "",
+            "status": "available"
+        }
+    },
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 325,
+        "fields": {
+            "date": "2024-12-09",
+            "time_start": "16:00:00Z",
+            "time_end": "17:00:00Z",
+            "tutor_id": 2,
+            "student_id": null,
+            "comment": "",
+            "status": "available"
+        }
+    },
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 326,
+        "fields": {
+            "date": "2024-12-09",
+            "time_start": "17:00:00Z",
+            "time_end": "18:00:00Z",
+            "tutor_id": 2,
+            "student_id": null,
+            "comment": "",
+            "status": "available"
+        }
+    },
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 327,
+        "fields": {
+            "date": "2024-12-09",
+            "time_start": "18:00:00Z",
+            "time_end": "19:00:00Z",
+            "tutor_id": 2,
+            "student_id": null,
+            "comment": "",
+            "status": "available"
+        }
+    },
+    {
+        "model": "edu_meet_admin_panel.slot",
+        "pk": 328,
+        "fields": {
+            "date": "2024-12-09",
+            "time_start": "19:00:00Z",
+            "time_end": "20:00:00Z",
+            "tutor_id": 2,
+            "student_id": null,
+            "comment": "",
+            "status": "available"
+        }
+    }
+]
