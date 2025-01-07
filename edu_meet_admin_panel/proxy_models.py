@@ -14,6 +14,19 @@ class OrderProxy(Order):
                      f"{self.slot.time_start.strftime('%H:%M')}")
         return f"Заказ {self.id}: {student_name} -> {date_time}"
 
+    def update_slot_status(self):
+        if self.status == 'accepted':
+            self.slot.status = 'accepted'
+        if self.status == 'declined':
+            self.slot.status = 'accepted'
+        if self.status == 'pending':
+            self.slot.status = 'pending'
+        self.slot.save()
+
+    def save(self, *args, **kwargs):
+        self.update_slot_status()
+        super().save(*args, **kwargs)
+
 
 class UserProxy(User):
     class Meta:
