@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.core.management import call_command
-from edu_meet_admin_panel.models import Slot, User
+from edu_meet_admin_panel.models import Slot, User, Order, AcademicSubject
 from django.utils.timezone import now
 
 
@@ -11,6 +11,8 @@ class DeleteUnusedSlotsFixtureTestCase(TestCase):
         # Временно включаем `managed = True`
         Slot._meta.managed = True
         User._meta.managed = True
+        Order._meta.managed = True
+        AcademicSubject._meta.managed = True
 
         call_command('migrate', run_syncdb=True, verbosity=0)
 
@@ -22,6 +24,8 @@ class DeleteUnusedSlotsFixtureTestCase(TestCase):
     def tearDownClass(cls):
         Slot._meta.managed = False
         User._meta.managed = False
+        Order._meta.managed = False
+        AcademicSubject._meta.managed = False
         super().tearDownClass()
 
     def test_delete_past_unused_slots_with_fixture(self):
@@ -32,7 +36,7 @@ class DeleteUnusedSlotsFixtureTestCase(TestCase):
         expected_to_delete = Slot.objects.filter(
             date__lt=now().date(),
             status__in=['available', 'unavailable']
-        ).count()
+        ).exclude(order__isnull=False).count()
 
         # Запускаем команду
         call_command('delete_unused_slots')

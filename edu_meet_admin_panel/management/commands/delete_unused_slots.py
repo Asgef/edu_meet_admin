@@ -15,7 +15,7 @@ class Command(BaseCommand):
         slots_to_delete = Slot.objects.filter(
             date__lt=current_datetime.date(),
             status__in=['available', 'unavailable']
-        )
+        ).exclude(order__isnull=False)
 
         # Сохраняем количество удаленных записей
         deleted_count, _ = slots_to_delete.delete()
