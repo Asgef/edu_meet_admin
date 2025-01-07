@@ -53,3 +53,6 @@ load_user:
 
 generate_slots:
 	python manage.py init_slots
+
+remove_slots:
+	python manage.py delete_unused_slots
