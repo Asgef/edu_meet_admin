@@ -19,6 +19,8 @@ class OrderProxy(Order):
             self.slot.status = 'accepted'
         if self.status == 'declined':
             self.slot.status = 'accepted'
+        if self.status == 'canceled':
+            self.slot.status = 'accepted'
         if self.status == 'pending':
             self.slot.status = 'pending'
         self.slot.save()
