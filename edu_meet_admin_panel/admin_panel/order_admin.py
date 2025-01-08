@@ -160,6 +160,9 @@ class OrderAdmin(admin.ModelAdmin):
 
     def set_status_accepted(self, request, queryset):
         updated = queryset.update(status='accepted')
+        OrderProxy.bulk_update_slot_statuses(
+            queryset.values_list('id', flat=True)
+        )
         self.message_user(
             request,
             f"{updated} заявок отмечены как 'Принят'",
@@ -168,6 +171,9 @@ class OrderAdmin(admin.ModelAdmin):
     set_status_accepted.short_description = "Отметить как 'Принят'"
 
     def set_status_declined(self, request, queryset):
+        OrderProxy.bulk_update_slot_statuses(
+            queryset.values_list('id', flat=True)
+        )
         updated = queryset.update(status='declined')
         self.message_user(
             request,
@@ -178,6 +184,9 @@ class OrderAdmin(admin.ModelAdmin):
 
     def set_status_canceled(self, request, queryset):
         updated = queryset.update(status='canceled')
+        OrderProxy.bulk_update_slot_statuses(
+            queryset.values_list('id', flat=True)
+        )
         self.message_user(
             request,
             f"{updated} заявок отмечены как 'Закрыт'",

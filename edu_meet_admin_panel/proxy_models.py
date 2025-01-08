@@ -18,12 +18,27 @@ class OrderProxy(Order):
         if self.status == 'accepted':
             self.slot.status = 'accepted'
         if self.status == 'declined':
-            self.slot.status = 'accepted'
+            self.slot.status = 'available'
         if self.status == 'canceled':
             self.slot.status = 'accepted'
         if self.status == 'pending':
             self.slot.status = 'pending'
         self.slot.save()
+
+    @staticmethod
+    def bulk_update_slot_statuses(order_ids):
+        orders = OrderProxy.objects.filter(id__in=order_ids).select_related(
+            'slot')
+        for order in orders:
+            if order.status == 'accepted':
+                order.slot.status = 'accepted'
+            elif order.status == 'declined':
+                order.slot.status = 'available'
+            elif order.status == 'canceled':
+                order.slot.status = 'accepted'
+            elif order.status == 'pending':
+                order.slot.status = 'pending'
+            order.slot.save()
 
     def save(self, *args, **kwargs):
         self.update_slot_status()
