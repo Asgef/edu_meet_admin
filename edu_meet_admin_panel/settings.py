@@ -15,6 +15,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 from datetime import time
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 load_dotenv()
 
@@ -35,6 +38,8 @@ PRODUCTION = os.getenv('PRODUCTION', 'False') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
+TELEGRAM_BOT_WEBHOOK_URL = os.getenv('TELEGRAM_BOT_WEBHOOK_URL')
+
 TUTOR_TG_ID = os.getenv('TUTOR_TG_ID')
 
 # Application definition
@@ -47,7 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',
-    'schedule',
+    # 'schedule',
     'django_bootstrap5',
     'edu_meet_admin_panel',
 ]
@@ -150,25 +155,37 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 FIXTURE_DIRS = ('edu_meet_admin_panel/tests/fixtures/',)
 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'console': {
-#             'class': 'logging.StreamHandler',
-#         },
-#     },
-#     'loggers': {
-#         '__main__': {
-#             'handlers': ['console'],
-#             'level': 'INFO',
-#         },
-#         'django.db.backends': {
-#             'handlers': ['console'],
-#             'level': 'DEBUG',
-#         },
-#     },
-# }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+        'detailed': {
+            'format': '{asctime} - {levelname} - {name} - {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'detailed',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if os.getenv('DEBUG', 'False') == 'True' else 'WARNING',
+            'propagate': False,
+        },
+    },
+}
+
+
 
 
 # Slot settings
