@@ -52,12 +52,13 @@ class OrderProxy(Order):
             webhook_url = settings.TELEGRAM_BOT_WEBHOOK_URL
             payload = {
                 "tg_id": self.student.tg_id,
-                "massage": f"Статус вашего заказа от "
+                "message": f"Статус вашего заказа от "
                            f"{self.date.strftime('%d.%m.%Y')} "
                            f"{self.slot.time_start.strftime('%H:%M')} "
                            f"изменена на {self.status}"
             }
             try:
+                logger.info(f'>>>>>>>>>>>>>>> {payload}')
                 response = requests.post(webhook_url, json=payload)
                 logger.info(f'>>>>>>>>>>>>>>> {response.text}')
                 response.raise_for_status()
