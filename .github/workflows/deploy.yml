@@ -36,6 +36,7 @@ jobs:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+          TELEGRAM_BOT_WEBHOOK_URL: ${{ secrets.TELEGRAM_BOT_WEBHOOK_URL }}
 
         run: |
           cd ansible

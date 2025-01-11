@@ -11,6 +11,7 @@
     secret_key: "{{ lookup('env', 'SECRET_KEY') }}"
     database_url: "{{ lookup('env', 'DATABASE_URL') }}"
     allowed_hosts: "{{ lookup('env', 'ALLOWED_HOSTS') }}"
+    telegram_bot_webhook_url: "{{ lookup('env', 'TELEGRAM_BOT_WEBHOOK_URL') }}"
 
   tasks:
     - name: Ensure the latest code is pulled from GitHub
