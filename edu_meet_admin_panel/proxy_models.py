@@ -48,6 +48,7 @@ class OrderProxy(Order):
             order.slot.save()
 
     def notify_user(self):
+        # TODO: Реализовать защиту с использованием auth токена.
         if self.student and self.student.tg_id:
             webhook_url = settings.TELEGRAM_BOT_WEBHOOK_URL
             payload = {

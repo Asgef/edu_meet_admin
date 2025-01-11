@@ -163,6 +163,9 @@ class OrderAdmin(admin.ModelAdmin):
         OrderProxy.bulk_update_slot_statuses(
             queryset.values_list('id', flat=True)
         )
+        # TODO: При масштабировании проекта следует пересмотреть отправку массовых уведомлений.
+        for order in queryset:
+            order.notify_user()
         self.message_user(
             request,
             f"{updated} заявок отмечены как 'Принят'",
@@ -175,6 +178,8 @@ class OrderAdmin(admin.ModelAdmin):
             queryset.values_list('id', flat=True)
         )
         updated = queryset.update(status='declined')
+        for order in queryset:
+            order.notify_user()
         self.message_user(
             request,
             f"{updated} заявок отмечены как 'Отклонен'",
@@ -187,6 +192,8 @@ class OrderAdmin(admin.ModelAdmin):
         OrderProxy.bulk_update_slot_statuses(
             queryset.values_list('id', flat=True)
         )
+        for order in queryset:
+            order.notify_user()
         self.message_user(
             request,
             f"{updated} заявок отмечены как 'Закрыт'",
